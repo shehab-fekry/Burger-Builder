@@ -1,0 +1,15 @@
+.ContactData
+{
+    /* border: 1px solid black; */
+    width: 50% auto;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    align-content: center;
+}
+
+.ContactData input
+{
+    margin: 5px;
+    display: block;
+}
