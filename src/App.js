@@ -7,21 +7,9 @@ import {Route, Switch} from 'react-router-dom';
 import Orders from './containers/Orders/Orders'; 
 
 class App extends Component {
-  // state=
-  // {
-  //   show:true,
-  // }
-  
-  // componentDidMount()
-  // {
-  //   setTimeout(()=>{
-  //     this.setState({show:false});
-  //   },5000)
-  // }
-
-// edit
 
   render(){
+    
     return(
       <Aux>
         <Layout>

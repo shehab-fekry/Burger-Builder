@@ -145,49 +145,31 @@ class ContactData extends Component{
         .catch(err=> err);
     }
 
-    // Checking Validation Methods:
-
-    // isRequired = (value) => {
-    //     return value.trim() !== "";
-    // }
-
-    // checkMin = (value, validation) => {
-    //     return value.length >= validation.minLength;
-    // }
-
-    // checkMax = (value, validation) => {
-    //     return value.length <= validation.maxLength;
-    // }
-
-    // Main Checking Method:
+    // Checking Validation Rules:
 
     checkValidity = (value, validation) =>
     {
-        const {required, minLength, maxLength} = validation
-        
-        const funcs = {
-            required: () => value.trim() !== "",
-            minLength: () => value.length >= minLength,
-            maxLength: () => value.length <= maxLength
-        }
-        
-        let valid = true
-        for(let key in validation) {
-            valid = funcs[key]()
-            if (!valid) break
-        }
-        return valid
+        let isValid1, isValid2, isValid3;
+        isValid1 = isValid2 = isValid3 = true;
 
-        // return this.isRequired(value, required) && 
-        // this.checkMin(value, minLength) 
-        // && this.checkMax(value, maxLength);
+        if(validation.isRequired)
+        isValid1 = value.trim() !== '';
+
+        if(validation.minLength)
+        isValid2 = value.length >= validation.minLength;
+
+        if(validation.maxLength)
+        isValid1 = value.length <= validation.maxLength;
+
+        return isValid1 && isValid2 && isValid3;
     }
 
     // check the wholeform
 
-    formIsValid = () =>
+    formIsValid = (updatedform) =>
     {
-        const {name, street, zipCode, country, email, deliveryMethod} = this.state.formElemets
+        // this was the main issue, (passing this.state.formElements  instead of updatedform).
+        const {name, street, zipCode, country, email, deliveryMethod} = updatedform;
         return name.valid && 
         street.valid && 
         zipCode.valid && 
@@ -198,37 +180,28 @@ class ContactData extends Component{
 
     onChangeListener = (event, key) =>
     {
-        // let toUpdateForm = {...this.state.formElemets};
-        // let toUpdateElement = {...toUpdateForm[key]};
+        // deep cloning
+        let toUpdateForm = {...this.state.formElemets};
+        let toUpdateElement = {...toUpdateForm[key]};
 
-        // toUpdateElement.value = event.target.value;
-        // toUpdateElement.valid = this.checkValidity(toUpdateElement.value, toUpdateElement.validation);
-        // toUpdateElement.touched = true;
-        // toUpdateForm[key] = toUpdateElement;
+        toUpdateElement.value = event.target.value;
+        toUpdateElement.valid = this.checkValidity(toUpdateElement.value, toUpdateElement.validation);
+        toUpdateElement.touched = true;
+        toUpdateForm[key] = toUpdateElement;
 
-        const {value='', validation={}} = this.state.formElemets[key]
-
-        const updates = {
-            ...this.state.formElemets[key],
-            value: event.target.value,
-            valid: this.checkValidity(event.target.value, validation),
-            touched: true,
-        }
-
-        // let formIsV = this.formIsValid();
-        // console.log(this.formIsValid());
-
-        this.setState({formElemets: {...this.state.formElemets, [key]: updates}, formIsValid: this.formIsValid()});
+        this.setState({formElemets: toUpdateForm, formIsValid: this.formIsValid(toUpdateForm)});
     }
 
     render(){
+        const disabled = !this.state.formIsValid;
+
         let formElementsArray = [];
         for(let key in this.state.formElemets)
         formElementsArray.push({
             id: key,
             ...this.state.formElemets[key],
         });
-        const disabled = !this.state.formIsValid
+
         return(
             <div className={classes.ContactData}>
                 <h3>Enter Your Contact Information</h3>
