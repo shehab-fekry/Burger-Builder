@@ -8,10 +8,12 @@ import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery';
 import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErorHandler from '../../hoc/withErrorHandler';
+import { connect } from 'react-redux';
+import * as actionTypes from '../../store/actions';
 
 class BurgerBuilder extends Component{
     state ={
-        ingredients:[],
+        //ingredients:[],
         price: 0,
         authorization: true,
         modalState: false,
@@ -22,20 +24,20 @@ class BurgerBuilder extends Component{
     componentDidMount()
     {
         
-        //console.log(this.props);
-        axios.get('/ingredients.json')
-        .then(response=>{
-            let dataFetched=[];
-            dataFetched = Object.keys(response.data).map(key=>{
-                return Array(response.data[key]).fill(key);
-                //Alternative for Flat: 
-                //.reduce((acc, val) => acc.concat(val), []);
-            });
-            this.setState({ingredients: dataFetched.flat()});
-        })
-        .catch(error=>{
-            this.setState({error:error});
-        });
+        console.log(this.props);
+        // axios.get('/ingredients.json')
+        // .then(response=>{
+        //     let dataFetched=[];
+        //     dataFetched = Object.keys(response.data).map(key=>{
+        //         return Array(response.data[key]).fill(key);
+        //         //Alternative for Flat: 
+        //         //.reduce((acc, val) => acc.concat(val), []);
+        //     });
+        //     this.setState({ingredients: dataFetched.flat()});
+        // })
+        // .catch(error=>{
+        //     this.setState({error:error});
+        // });
     }
 
     showModal = () =>{
@@ -47,124 +49,124 @@ class BurgerBuilder extends Component{
     }
 
     checkout = () =>{
-        let ingredients = [...this.state.ingredients];
+        // let ingredients = [...this.state.ingredients];
 
-        const ingData = ingredients.reduce((resault, element)=>{
-            resault[element] = resault[element] ? resault[element]+1 : 1;
-            return resault;
-        },{});
+        // const ingData = ingredients.reduce((resault, element)=>{
+        //     resault[element] = resault[element] ? resault[element]+1 : 1;
+        //     return resault;
+        // },{});
         
-        const queryParams= [];
-        for(let key in ingData)
-        queryParams.push(encodeURIComponent(key) + '=' + encodeURIComponent(ingData[key]));
-        const queryString = queryParams.join('&');
+        // const queryParams= [];
+        // for(let key in ingData)
+        // queryParams.push(encodeURIComponent(key) + '=' + encodeURIComponent(ingData[key]));
+        // const queryString = queryParams.join('&');
 
         this.props.history.push({
             pathname:'/checkout',
-            search: queryString + '&price=' + this.state.price.toFixed(1),
+            //search: queryString + '&price=' + this.state.price.toFixed(1),
         });
     }
 
-    updateButtonState = (ing) =>
-    {
-        let auth;
-        if(ing.length === 0)
-        {auth = true}
-        else
-        {auth = false}
+    // updateButtonState = (ing) =>
+    // {
+    //     let auth;
+    //     if(ing.length === 0)
+    //     {auth = true}
+    //     else
+    //     {auth = false}
 
-        this.setState({authorization: auth});
-    }
+    //     this.setState({authorization: auth});
+    // }
 
-    addIngredient = (type) => {
-        const ingredients = [...this.state.ingredients];
-        ingredients.push(type);
+    // addIngredient = (type) => {
+    //     const ingredients = [...this.state.ingredients];
+    //     ingredients.push(type);
 
-        let pr = this.state.price;
-            switch(type){
-                case "salad":
-                    pr += 0.4;
-                    break;
-                case "bacon":
-                    pr += 0.3;
-                    break;
-                case "cheese":
-                    pr += 0.5;
-                    break;
-                case "meat":
-                    pr += 1.0;
-                    break;
-                default:
-                    break;
-            }
+    //     let pr = this.state.price;
+    //         switch(type){
+    //             case "salad":
+    //                 pr += 0.4;
+    //                 break;
+    //             case "bacon":
+    //                 pr += 0.3;
+    //                 break;
+    //             case "cheese":
+    //                 pr += 0.5;
+    //                 break;
+    //             case "meat":
+    //                 pr += 1.0;
+    //                 break;
+    //             default:
+    //                 break;
+    //         }
 
-        this.setState({
-            ingredients: ingredients,
-            price: pr,
-        })
-        this.updateButtonState(ingredients);
-    }
+    //     this.setState({
+    //         ingredients: ingredients,
+    //         price: pr,
+    //     })
+    //     this.updateButtonState(ingredients);
+    // }
 
-    deleteIngredient = (type) => {
-        const ingredients = [...this.state.ingredients];
-        let pr = this.state.price;
-        for(let i=0 ; i<ingredients.length; i++)
-        {
-            if(ingredients[i] === type)
-            {
-                ingredients.splice(i,1);
-                switch(type){
-                    case "salad":
-                        pr -= 0.4;
-                        break;
-                    case "bacon":
-                        pr -= 0.3;
-                        break;
-                    case "cheese":
-                        pr -= 0.5;
-                        break;
-                    case "meat":
-                        pr -= 1.0;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            }
-        }
+    // deleteIngredient = (type) => {
+    //     const ingredients = [...this.state.ingredients];
+    //     let pr = this.state.price;
+    //     for(let i=0 ; i<ingredients.length; i++)
+    //     {
+    //         if(ingredients[i] === type)
+    //         {
+    //             ingredients.splice(i,1);
+    //             switch(type){
+    //                 case "salad":
+    //                     pr -= 0.4;
+    //                     break;
+    //                 case "bacon":
+    //                     pr -= 0.3;
+    //                     break;
+    //                 case "cheese":
+    //                     pr -= 0.5;
+    //                     break;
+    //                 case "meat":
+    //                     pr -= 1.0;
+    //                     break;
+    //                 default:
+    //                     break;
+    //             }
+    //             break;
+    //         }
+    //     }
             
 
-        this.setState({
-            ingredients: ingredients,
-            price: pr,
-        })
-        this.updateButtonState(ingredients);
-    }
+    //     this.setState({
+    //         ingredients: ingredients,
+    //         price: pr,
+    //     })
+    //     this.updateButtonState(ingredients);
+    // }
 
     render(){
         let orderSummery = null;
         let burger = this.state.error ? <p>Somthing went wrong...!</p> : <Spinner/>;
-        if(this.state.ingredients)
+        if(this.props.ings)
         {
             burger =(
                 <Aux>
-                    <Burger list={this.state.ingredients}/>
+                    <Burger list={this.props.ings}/>
                 
                     <BuildControls 
-                    add={this.addIngredient}
-                    delete={this.deleteIngredient}
-                    price={this.state.price}
-                    controlState={this.state.authorization}
+                    add={this.props.toAddIngs}
+                    delete={this.props.toRemoveIngs}
+                    price={this.props.pr}
+                    controlState={this.props.buttonAuth}
                     orderButtonState={this.showModal}/>
                 </Aux>
             );
 
             orderSummery =(
                 <OrderSummery 
-                    ingredient={this.state.ingredients}
+                    ingredient={this.props.ings}
                     hideModal={this.hideModal}
                     checkout={this.checkout}
-                    price={this.state.price}/>
+                    price={this.props.pr}/>
             );
             if(this.state.loading)
             orderSummery = (<Spinner/>);
@@ -183,4 +185,18 @@ class BurgerBuilder extends Component{
     }
 }
 
-export default withErorHandler(BurgerBuilder,axios);
+const mapStateToProps = (state) => {
+    return {
+        ings: state.ingredients,
+        buttonAuth: state.orderButtonAuth,
+        pr: state.price, 
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        toAddIngs: (ingtype) => dispatch({type: actionTypes.ADD_INGREDIENT, ingType: ingtype}),
+        toRemoveIngs: (ingtype) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingType: ingtype}),
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withErorHandler(BurgerBuilder,axios));

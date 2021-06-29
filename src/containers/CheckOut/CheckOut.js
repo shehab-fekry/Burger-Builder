@@ -5,40 +5,41 @@ import {Route} from 'react-router-dom';
 import ContactData from './ContactData/ContactData';
 import withErrorHandler from '../../hoc/withErrorHandler';
 import axios from '../../axios-orders';
+import { connect } from 'react-redux';
 
 class CheckOut extends Component
 {
-    state ={
-        ingredients:[],
-        price:0,
-    }
+    // state ={
+    //     ingredients:[],
+    //     price:0,
+    // }
 
-    componentDidMount()
-    {
-        // GETTING THE INGREDIENTS FROM THE [SEARCH] IN OBJECT FORM:
-        const ingQueryStr = this.props.location.search.slice(1,).slice(0,-10);
+    // componentDidMount()
+    // {
+    //     // GETTING THE INGREDIENTS FROM THE [SEARCH] IN OBJECT FORM:
+    //     const ingQueryStr = this.props.location.search.slice(1,).slice(0,-10);
 
-        const ingQueryObj = ingQueryStr.split('&').reduce((res, piece)=>{
-            let [key, value] = piece.split('=');
-            //if(key !== 'price')
-            res[key] = +value;
-            return res;
-        },{});
-        //console.log(ingQueryObj);
+    //     const ingQueryObj = ingQueryStr.split('&').reduce((res, piece)=>{
+    //         let [key, value] = piece.split('=');
+    //         //if(key !== 'price')
+    //         res[key] = +value;
+    //         return res;
+    //     },{});
+    //     //console.log(ingQueryObj);
 
 
-        // CONVERTING IT INTO ARRAY:
-        let ingQueryArray = Object.keys(ingQueryObj).map(key =>{
-            return Array(ingQueryObj[key]).fill(key);
-        }).flat();
-        //console.log(ingQueryArray);
+    //     // CONVERTING IT INTO ARRAY:
+    //     let ingQueryArray = Object.keys(ingQueryObj).map(key =>{
+    //         return Array(ingQueryObj[key]).fill(key);
+    //     }).flat();
+    //     //console.log(ingQueryArray);
 
-        // SETTING THE PRICE & THE STATE:
-        let priceString = this.props.location.search.slice(-9,);
-        let [, value] = priceString.split('=');
+    //     // SETTING THE PRICE & THE STATE:
+    //     let priceString = this.props.location.search.slice(-9,);
+    //     let [, value] = priceString.split('=');
 
-        this.setState({ingredients: ingQueryArray, price: value});
-    }
+    //     this.setState({ingredients: ingQueryArray, price: value});
+    // }
 
     checkoutCanceled = () =>{
         this.props.history.goBack();
@@ -53,19 +54,26 @@ class CheckOut extends Component
         return(
             <div style={{width:'100%'}}>
                 <CheckoutSummery
-                ingredients={this.state.ingredients}
+                ingredients={this.props.ings}
                 checkoutCanceled={this.checkoutCanceled}
                 checkoutContinued={this.checkoutContinued}/>
 
                 <Route 
                 path={this.props.match.path + '/contact-data'}
-                render={()=> <ContactData price={this.state.price} ingredients={this.state.ingredients}/>}/>
+                render={()=> <ContactData price={this.props.pr} ingredients={this.props.ings}/>}/>
             </div>
         )
     }
 }
 
-export default CheckOut;
+const mapStateToProps = (state) => {
+    return {
+        ings: state.ingredients,
+        pr: state.price,
+    }
+}
+
+export default connect(mapStateToProps)(CheckOut);
 
 
 
