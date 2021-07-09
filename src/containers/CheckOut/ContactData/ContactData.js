@@ -1,10 +1,13 @@
 import React from 'react';
 import Button from '../../../components/UI/Button/Button';
 import classes from './ContactData.css';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Redirect} from 'react-router-dom';
 import { Component } from 'react';
 import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
+import {connect} from 'react-redux';
+import * as orderActions from '../../../store/actions/orderActions';
+import * as BurgerBuilderActions from '../../../store/actions/burgerBuiderActions';
 
 class ContactData extends Component{
     state=
@@ -102,24 +105,22 @@ class ContactData extends Component{
                 },
                 valid: false,
                 shouldValidate: false,
-                value: '',
+                value: 'Fastest',
             },
         },
         ingredients:{},
-        price:0,
         formIsValid: false,
         loading:false,
     }
 
     componentDidMount()
     {
-        const ingDataObject = this.props.ingredients.reduce((resault, element)=>{
-            resault[element] = resault[element] ? resault[element]+1 : 1;
+        const ingDataObject = this.props.ings.reduce((resault, element)=>{
+            resault[element] = resault[element] ? resault[element] + 1 : 1;
             return resault;
         },{});
 
         this.setState({
-            price: this.props.price,
             ingredients: ingDataObject,
         });
     }
@@ -134,15 +135,13 @@ class ContactData extends Component{
         
         const order = {
             ingredients: this.state.ingredients,
-            price: this.state.price,
+            price: this.props.price,
             formInfo: formData,
         };
 
-        axios.post('/orders.json', order)
-        .then(requist=>{
-            this.props.history.replace('/orders');
-        })
-        .catch(err=> err);
+        this.props.onSendOrder(order, this.props.history);
+        this.props.onResetAll();
+
     }
 
     // Checking Validation Rules:
@@ -202,6 +201,7 @@ class ContactData extends Component{
             ...this.state.formElemets[key],
         });
 
+
         return(
             <div className={classes.ContactData}>
                 <h3>Enter Your Contact Information</h3>
@@ -226,4 +226,20 @@ class ContactData extends Component{
     }
 }
 
-export default withRouter(ContactData);
+const mapStateToProps = (state) =>
+{
+    return {
+        ings: state.ings.ingredients,
+        price: state.ings.price,
+    }
+}
+
+const mapDispatchToProps = (dispatch) =>
+{
+    return {
+        onSendOrder: (order, history) => dispatch(orderActions.sendOrder(order, history)),
+        onResetAll: () => dispatch(BurgerBuilderActions.resetAll()),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ContactData));

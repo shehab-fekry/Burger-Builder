@@ -1,9 +1,10 @@
-import * as actionTypes from './actions';
+import * as actionTypes from '../actions/actionTypes';
 
 let initialState = {
     ingredients:[],
     orderButtonAuth: true,
     price: 0,
+    error: false,
 }
 
 const reducer = (state = initialState, action) => {
@@ -77,6 +78,27 @@ const reducer = (state = initialState, action) => {
                 orderButtonAuth: auth,
                 price: pr,
             }
+
+            case actionTypes.SET_INGREDIENT:
+                return {
+                    ...state,
+                    ingredients: action.ingredients,
+                    error: false,
+                }
+
+            case actionTypes.FETCH_INGREDIENT_FAILED:
+                return {
+                    ...state,
+                    error: true,
+                }
+                
+            case actionTypes.RESET_ALL:
+                return {
+                    ...state,
+                    price: 0,
+                    orderButtonAuth: true,
+                    ingredients: [],
+                } 
         default:
             return state;
     }

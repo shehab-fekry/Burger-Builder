@@ -5,11 +5,20 @@ import App from './App.js';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from 'react-router-dom';
 
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from '../src/store/reducer';
+import ingReducer from './store/reducers/ingredients';
+import orderReducer from './store/reducers/orders';
+import thunk from 'redux-thunk';
 
-const store = createStore(reducer);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const rootReducer = combineReducers({
+    ings: ingReducer,
+    order: orderReducer,
+});
+
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
  
 const app = (
   <Provider store = {store}>
